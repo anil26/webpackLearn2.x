@@ -2,11 +2,12 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
-
 module.exports = {
   entry: {
-  index: './src/index.js',
-  another: './src/another-module.js'
+  main: './src/index.js',
+  vendor: [
+   'lodash'
+  ]
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -16,16 +17,20 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Code splitting'
+      title: 'Caching'
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'common' // Specify the common bundle's name.
+       name: 'vendor'
     }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.optimize.CommonsChunkPlugin({
+       name: 'runtime'
+    })
+    // new webpack.NamedModulesPlugin(),
+    // new webpack.HotModuleReplacementPlugin()
   ],
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].[chunkhash].js',
+    chunkFilename:'[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   }
